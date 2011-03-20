@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<project name="AutoUpdater" default="main" basedir=".">
+	<taskdef name="autoUpdaterDefinition" classname="cz.zweistein.autoupdater.ant.AutoUpdaterDefinition" classpath="bin;lib/commons-codec-1.4/commons-codec-1.4.jar" />
+
+	<target name="main">
+		<autoUpdaterDefinition srcdir="..\SoundSense\packs" destfile="autoUpdater.xml" />
+	</target>
+	
+	<target name="test">
+		<autoUpdaterDefinition srcdir="..\AutoUpdaterClient\testData" destfile="..\AutoUpdaterClient\autoUpdater.xml" />
+	</target>
+	
+</project>
