@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<project name="AutoUpdater" basedir="." default="jar">
+
+	<property file="build.properties"/>
+
+	<target name="clean">
+		<delete dir="${build.temp.path}"/>
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${build.temp.path}"/>
+		<javac srcdir="src" destdir="${build.temp.path}" classpath="./lib/commons-codec-1.4/commons-codec-1.4.jar" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${release.prebuilt.path}"/>
+		<jar destfile="${release.prebuilt.path}/autoUpdater.jar" basedir="${build.temp.path}">
+		</jar>
+	</target>
+	
+</project>
