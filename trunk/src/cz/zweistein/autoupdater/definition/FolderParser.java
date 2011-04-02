@@ -29,6 +29,7 @@ public class FolderParser {
 				} else if (file.isFile()) {
 					VersionedFile versionedFile = new VersionedFile();
 					versionedFile.setName(file.getName());
+					versionedFile.setSize(file.length());
 					try {
 						FileInputStream is = new FileInputStream(file);
 						versionedFile.setSha1(DigestUtils.shaHex(is));

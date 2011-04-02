@@ -73,4 +73,11 @@ public class ProgressCallback implements IProgressCallback {
 		this.callbacks.add(callback);
 	}
 
+	@Override
+	public void totalProgress(Long localSize, Long remoteSize) {
+		for (IProgressCallback callback : callbacks) {
+			callback.totalProgress(localSize, remoteSize);
+		}
+	}
+
 }

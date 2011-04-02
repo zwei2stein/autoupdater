@@ -30,6 +30,19 @@ public class Directory {
 	public String getName() {
 		return name;
 	}
+	
+	public Long getSize() {
+		long result = 0l;
+		
+		for (Directory d: this.directories) {
+			result+=d.getSize();
+		}
+		for (VersionedFile f: this.files) {
+			result+=f.getSize();
+		}
+		
+		return result;
+	}
 
 	@Override
 	public String toString() {

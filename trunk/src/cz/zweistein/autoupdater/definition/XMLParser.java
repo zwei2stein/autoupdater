@@ -63,6 +63,7 @@ public class XMLParser {
 		
 		file.setName(item.getAttributes().getNamedItem("name").getNodeValue());
 		file.setSha1(item.getAttributes().getNamedItem("sha1").getNodeValue());
+		file.setSize(Long.parseLong(item.getAttributes().getNamedItem("size").getNodeValue()));
 		
 		return file;
 	}

@@ -69,6 +69,7 @@ public class XMLProducer {
 		
 		fileElement.setAttribute("name", file.getName());
 		fileElement.setAttribute("sha1", file.getSha1());
+		fileElement.setAttribute("size", Long.toString(file.getSize()));
 		
 		return fileElement;
 	}

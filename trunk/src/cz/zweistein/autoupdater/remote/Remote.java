@@ -52,7 +52,7 @@ public class Remote {
 		
 	}
 	
-	public void downloadFile(String localFilename, String url) throws IOException {
+	public void downloadFile(String localFilename, String url, Long expectedSize) throws IOException {
 		
 		String replacedUrl = url.replaceAll(" ", "%20");
 		
@@ -68,7 +68,7 @@ public class Remote {
 			while ((n = reader.read(buffer, 0, bufferSize)) != -1) {
 				writer.write(buffer, 0, n);
 				count += n;
-				progressCallback.downloadProgress(count, null, url);
+				progressCallback.downloadProgress(count, expectedSize, url);
 			}
 		} finally {
 			reader.close();
