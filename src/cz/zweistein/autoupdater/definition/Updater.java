@@ -31,7 +31,7 @@ public class Updater {
 						//file is changed
 						String localFilename = localPath+"/"+localFile.getName();
 						new File(localFilename).delete();
-						this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName());
+						this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
 					}
 					found = true;
 					break;
@@ -56,7 +56,7 @@ public class Updater {
 				this.callbackHolder.newFound(remoteFile.getName());
 				//file was added
 				String localFilename = localPath+"/"+remoteFile.getName();
-				this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName());
+				this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
 			}
 		}
 		

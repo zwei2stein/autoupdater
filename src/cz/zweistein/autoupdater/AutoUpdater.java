@@ -10,8 +10,11 @@ import cz.zweistein.autoupdater.remote.Remote;
 
 public class AutoUpdater {
 	
+	private static final String DFEAULT_DEFINITION_FILE = "autoUpdater.xml";
+	
 	private String localFolder;
 	private String remoteDefinitionURL;
+	private String definitionFile;
 	
 	private ProgressCallback callbackHolder;
 	
@@ -19,6 +22,7 @@ public class AutoUpdater {
 		super();
 		this.localFolder = localFolder;
 		this.remoteDefinitionURL = remoteDefinitionURL;
+		this.definitionFile = DFEAULT_DEFINITION_FILE;
 		
 		this.callbackHolder = new ProgressCallback();
 	}
@@ -33,7 +37,9 @@ public class AutoUpdater {
 			
 			Remote remote = new Remote(callbackHolder);
 			
-			Directory remoteDir = XMLParser.parse(remote.getUrlContent(this.remoteDefinitionURL+"/autoUpdater.xml"));
+			Directory remoteDir = XMLParser.parse(remote.getUrlContent(this.remoteDefinitionURL+"/"+this.definitionFile));
+			
+			this.callbackHolder.totalProgress(local.getSize(), remoteDir.getSize());
 			
 			Updater updater = new Updater(callbackHolder); 
 			updater.compareAndUpdate(local, remoteDir, localFolder, remoteDefinitionURL);
@@ -41,14 +47,17 @@ public class AutoUpdater {
 			this.callbackHolder.done();
 		
 		} catch (Exception e) {
-			callbackHolder.error(e.toString());
+			this.callbackHolder.error(e.toString());
+			this.callbackHolder.done();
 		}
 	}
 	
 	public void registerCallback(IProgressCallback callback) {
 		this.callbackHolder.registerCallback(callback);
 	}
+
+	public void setDefinitionFile(String definitionFile) {
+		this.definitionFile = definitionFile;
+	}
 	
-
-
 }

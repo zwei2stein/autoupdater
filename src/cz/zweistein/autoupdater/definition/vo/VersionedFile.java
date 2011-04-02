@@ -4,6 +4,7 @@ public class VersionedFile {
 	
 	private String name;
 	private String sha1;
+	private Long size;
 	
 	public String getName() {
 		return name;
@@ -20,10 +21,19 @@ public class VersionedFile {
 	public void setSha1(String sha1) {
 		this.sha1 = sha1;
 	}
+	
+	public void setSize(Long size) {
+		this.size = size;
+	}
+	
+	public Long getSize() {
+		return size;
+	}
 
 	@Override
 	public String toString() {
-		return "VersionedFile [name=" + name + ", sha1=" + sha1 + "]";
+		return "VersionedFile [name=" + this.name + ", sha1=" + this.sha1
+				+ ", size=" + this.size + "]";
 	}
 
 }
