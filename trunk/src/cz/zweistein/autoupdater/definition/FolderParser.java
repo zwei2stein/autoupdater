@@ -46,9 +46,9 @@ public class FolderParser {
 			}
 			
 			return directory;
+		} else {
+			throw new IllegalArgumentException("Directory " + path + " not found."); 
 		}
-		
-		else return null;
 		
 	}
 

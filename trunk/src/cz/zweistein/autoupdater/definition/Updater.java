@@ -12,9 +12,14 @@ public class Updater {
 
 	private IProgressCallback callbackHolder;
 	private Remote remote;
+	
+	private Long total;
+	private Long progress;
 
-	public Updater(IProgressCallback callbackHolder) {
+	public Updater(IProgressCallback callbackHolder, Long progress, Long total) {
 		this.callbackHolder = callbackHolder;
+		this.total = total;
+		this.progress = progress;
 		this.remote = new Remote(callbackHolder);
 	}
 
@@ -32,6 +37,8 @@ public class Updater {
 						String localFilename = localPath+"/"+localFile.getName();
 						new File(localFilename).delete();
 						this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
+						this.progress+=remoteFile.getSize();
+						this.callbackHolder.totalProgress(this.progress, this.total);
 					}
 					found = true;
 					break;
@@ -57,6 +64,8 @@ public class Updater {
 				//file was added
 				String localFilename = localPath+"/"+remoteFile.getName();
 				this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
+				this.progress+=remoteFile.getSize();
+				this.callbackHolder.totalProgress(this.progress, this.total);
 			}
 		}
 		
@@ -99,6 +108,8 @@ public class Updater {
 		for(File child: file.listFiles()) {
 			if (child.isFile()) {
 				this.callbackHolder.deleted(child.getName());
+				this.progress-=child.length();
+				this.callbackHolder.totalProgress(this.progress, this.total);
 				child.delete();
 			} else if (child.isDirectory()) {
 				deleteDirectoryTree(child);
