@@ -41,7 +41,7 @@ public class AutoUpdater {
 			
 			this.callbackHolder.totalProgress(local.getSize(), remoteDir.getSize());
 			
-			Updater updater = new Updater(callbackHolder); 
+			Updater updater = new Updater(callbackHolder, local.getSize(), remoteDir.getSize()); 
 			updater.compareAndUpdate(local, remoteDir, localFolder, remoteDefinitionURL);
 			
 			this.callbackHolder.done();
