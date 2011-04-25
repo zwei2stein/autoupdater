@@ -17,6 +17,7 @@ public class ProgressCallback implements IProgressCallback {
 	public void changeFound(String filename) {
 		for (IProgressCallback callback : callbacks) {
 			callback.changeFound(filename);
+			callback.tick();
 		}
 	}
 
@@ -24,6 +25,7 @@ public class ProgressCallback implements IProgressCallback {
 	public void newFound(String filename) {
 		for (IProgressCallback callback : callbacks) {
 			callback.newFound(filename);
+			callback.tick();
 		}
 	}
 
@@ -31,6 +33,7 @@ public class ProgressCallback implements IProgressCallback {
 	public void deleted(String filename) {
 		for (IProgressCallback callback : callbacks) {
 			callback.deleted(filename);
+			callback.tick();
 		}
 	}
 
@@ -38,6 +41,7 @@ public class ProgressCallback implements IProgressCallback {
 	public void done() {
 		for (IProgressCallback callback : callbacks) {
 			callback.done();
+			callback.tick();
 		}
 	}
 
@@ -45,6 +49,7 @@ public class ProgressCallback implements IProgressCallback {
 	public void localParseStart() {
 		for (IProgressCallback callback : callbacks) {
 			callback.localParseStart();
+			callback.tick();
 		}
 	}
 
@@ -52,6 +57,7 @@ public class ProgressCallback implements IProgressCallback {
 	public void localParseDone() {
 		for (IProgressCallback callback : callbacks) {
 			callback.localParseDone();
+			callback.tick();
 		}
 	}
 	
@@ -66,6 +72,7 @@ public class ProgressCallback implements IProgressCallback {
 	public void downloadProgress(Long progress, Long total, String url) {
 		for (IProgressCallback callback : callbacks) {
 			callback.downloadProgress(progress, total, url);
+			callback.tick();
 		}
 	}
 
@@ -77,6 +84,14 @@ public class ProgressCallback implements IProgressCallback {
 	public void totalProgress(Long localSize, Long remoteSize) {
 		for (IProgressCallback callback : callbacks) {
 			callback.totalProgress(localSize, remoteSize);
+			callback.tick();
+		}
+	}
+
+	@Override
+	public void tick() {
+		for (IProgressCallback callback : callbacks) {
+			callback.tick();
 		}
 	}
 

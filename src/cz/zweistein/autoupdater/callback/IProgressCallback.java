@@ -19,5 +19,7 @@ public interface IProgressCallback {
 	public void downloadProgress(Long progress, Long total, String url);
 	
 	public void totalProgress(Long localSize, Long remoteSize);
-
+	
+	public void tick();
+	
 }
