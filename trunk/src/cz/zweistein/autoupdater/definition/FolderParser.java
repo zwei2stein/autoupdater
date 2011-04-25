@@ -7,14 +7,24 @@ import java.io.IOException;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import cz.zweistein.autoupdater.callback.IProgressCallback;
 import cz.zweistein.autoupdater.definition.vo.Directory;
 import cz.zweistein.autoupdater.definition.vo.VersionedFile;
 
 public class FolderParser {
 	
-	public static Directory parse(String path) {
+	private IProgressCallback callbackHolder;
+	
+	public FolderParser(IProgressCallback callbackHolder) {
+		super();
+		this.callbackHolder = callbackHolder;
+	}
+
+	public Directory parse(String path) {
 		
 		File dir = new File(path);
+		
+		callbackHolder.tick();
 		
 		if (dir.isDirectory()) {
 			

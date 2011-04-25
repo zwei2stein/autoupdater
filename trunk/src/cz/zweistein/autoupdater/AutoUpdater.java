@@ -32,7 +32,9 @@ public class AutoUpdater {
 		try {
 		
 			this.callbackHolder.localParseStart();
-			Directory local = FolderParser.parse(localFolder);
+			
+			FolderParser folderParser = new FolderParser(callbackHolder);
+			Directory local = folderParser.parse(localFolder);
 			this.callbackHolder.localParseDone();
 			
 			Remote remote = new Remote(callbackHolder);
