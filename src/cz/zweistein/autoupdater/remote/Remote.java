@@ -37,10 +37,18 @@ public class Remote {
 		char[] buffer = new char[bufferSize];
 		try {
 			long count = 0;;
-			int n;
-			while ((n = reader.read(buffer)) != -1) {
-				writer.write(buffer, 0, n);
-				count += n;
+			int bytesRead;
+			long time = System.nanoTime();
+			while ((bytesRead = reader.read(buffer)) != -1) {
+				long nextTime = System.nanoTime();
+				if (nextTime != time) {
+					long bytesPerSecond = (1000000*bytesRead)/(nextTime - time);
+					progressCallback.speed(bytesPerSecond);
+					time = nextTime;
+				}
+				
+				writer.write(buffer, 0, bytesRead);
+				count += bytesRead;
 				progressCallback.downloadProgress(count, null, url);
 			}
 		} finally {
@@ -63,11 +71,19 @@ public class Remote {
 		
 		byte[] buffer = new byte[bufferSize];
 		try {
-			long count = 0;;
-			int n;
-			while ((n = reader.read(buffer, 0, bufferSize)) != -1) {
-				writer.write(buffer, 0, n);
-				count += n;
+			long count = 0;
+			int bytesRead;
+			long time = System.nanoTime();
+			while ((bytesRead = reader.read(buffer)) != -1) {
+				long nextTime = System.nanoTime();
+				if (nextTime != time) {
+					long bytesPerSecond = (1000000*bytesRead)/(nextTime - time);
+					progressCallback.speed(bytesPerSecond);
+					time = nextTime;
+				}
+				
+				writer.write(buffer, 0, bytesRead);
+				count += bytesRead;
 				progressCallback.downloadProgress(count, expectedSize, url);
 			}
 		} finally {

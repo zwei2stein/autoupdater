@@ -95,4 +95,11 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 
+	@Override
+	public void speed(Long bytesPerSec) {
+		for (IProgressCallback callback : callbacks) {
+			callback.speed(bytesPerSec);
+		}
+	}
+
 }

@@ -20,6 +20,8 @@ public interface IProgressCallback {
 	
 	public void totalProgress(Long localSize, Long remoteSize);
 	
+	public void speed(Long bytesPerSec);
+	
 	public void tick();
 	
 }
