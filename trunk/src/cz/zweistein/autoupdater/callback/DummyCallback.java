@@ -42,4 +42,8 @@ public class DummyCallback implements IProgressCallback {
 	public void tick() {
 	}
 
+	@Override
+	public void speed(Long bytesPerSec) {
+	}
+
 }
