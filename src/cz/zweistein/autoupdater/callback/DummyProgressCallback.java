@@ -1,6 +1,6 @@
 package cz.zweistein.autoupdater.callback;
 
-public class DummyCallback implements IProgressCallback {
+public class DummyProgressCallback implements IProgressCallback {
 
 	@Override
 	public void changeFound(String filename) {

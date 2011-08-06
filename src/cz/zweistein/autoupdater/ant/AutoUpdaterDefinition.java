@@ -10,7 +10,7 @@ import javax.xml.transform.TransformerException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-import cz.zweistein.autoupdater.callback.DummyCallback;
+import cz.zweistein.autoupdater.callback.DummyProgressCallback;
 import cz.zweistein.autoupdater.definition.FolderParser;
 import cz.zweistein.autoupdater.definition.XMLProducer;
 import cz.zweistein.autoupdater.definition.vo.Directory;
@@ -32,7 +32,7 @@ public class AutoUpdaterDefinition extends Task {
 		
 		try {
 			
-			FolderParser folderParser = new FolderParser(new DummyCallback());
+			FolderParser folderParser = new FolderParser(new DummyProgressCallback());
 			Directory directory = folderParser.parse(this.srcdir);
 			String content = XMLProducer.createXML(directory);
 			File xmlFile = new File(this.destfile);

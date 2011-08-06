@@ -42,7 +42,7 @@ public class Remote {
 			while ((bytesRead = reader.read(buffer)) != -1) {
 				long nextTime = System.nanoTime();
 				if (nextTime != time) {
-					long bytesPerSecond = (1000000*bytesRead)/(nextTime - time);
+					long bytesPerSecond = (10000000*bytesRead)/(nextTime - time);
 					progressCallback.speed(bytesPerSecond);
 					time = nextTime;
 				}
@@ -77,7 +77,7 @@ public class Remote {
 			while ((bytesRead = reader.read(buffer)) != -1) {
 				long nextTime = System.nanoTime();
 				if (nextTime != time) {
-					long bytesPerSecond = (1000000*bytesRead)/(nextTime - time);
+					long bytesPerSecond = (10000000*bytesRead)/(nextTime - time);
 					progressCallback.speed(bytesPerSecond);
 					time = nextTime;
 				}
