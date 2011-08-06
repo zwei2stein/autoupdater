@@ -3,6 +3,7 @@ package cz.zweistein.autoupdater.definition;
 import java.io.File;
 import java.io.IOException;
 
+import cz.zweistein.autoupdater.callback.IControllCallback;
 import cz.zweistein.autoupdater.callback.IProgressCallback;
 import cz.zweistein.autoupdater.definition.vo.Directory;
 import cz.zweistein.autoupdater.definition.vo.VersionedFile;
@@ -10,17 +11,19 @@ import cz.zweistein.autoupdater.remote.Remote;
 
 public class Updater {
 
-	private IProgressCallback callbackHolder;
+	private IProgressCallback progressCallbackHolder;
+	private IControllCallback controllCallbackHolder;
 	private Remote remote;
 	
 	private Long total;
 	private Long progress;
 
-	public Updater(IProgressCallback callbackHolder, Long progress, Long total) {
-		this.callbackHolder = callbackHolder;
+	public Updater(IProgressCallback progressCallbackHolder, IControllCallback controllCallbackHolder, Long progress, Long total) {
+		this.progressCallbackHolder = progressCallbackHolder;
+		this.controllCallbackHolder = controllCallbackHolder;
 		this.total = total;
 		this.progress = progress;
-		this.remote = new Remote(callbackHolder);
+		this.remote = new Remote(progressCallbackHolder);
 	}
 
 	public void compareAndUpdate(Directory local, Directory remote, String localPath, String remotePath) throws IOException {
@@ -32,22 +35,27 @@ public class Updater {
 					if (localFile.getSha1().equals(remoteFile.getSha1())) {
 						//file is up-to-date
 					} else {
-						this.callbackHolder.changeFound(localFile.getName());
-						//file is changed
-						String localFilename = localPath+"/"+localFile.getName();
-						new File(localFilename).delete();
-						this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
+						if (this.controllCallbackHolder.replaceExistingFile(localPath+"/"+localFile.getName())) {
+							this.progressCallbackHolder.changeFound(localFile.getName());
+							//file is changed
+							String localFilename = localPath+"/"+localFile.getName();
+							new File(localFilename).delete();
+							this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
+						}
 						this.progress+=remoteFile.getSize();
-						this.callbackHolder.totalProgress(this.progress, this.total);
+						this.progressCallbackHolder.totalProgress(this.progress, this.total);
+						
 					}
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				this.callbackHolder.deleted(localFile.getName());
-				//file was removed
-				new File(localPath+"/"+localFile.getName()).delete();
+				if (this.controllCallbackHolder.deleteExistingFile(localPath+"/"+localFile.getName())) {
+					this.progressCallbackHolder.deleted(localFile.getName());
+					//file was removed
+					new File(localPath+"/"+localFile.getName()).delete();
+				}
 			}
 		}
 		
@@ -60,12 +68,12 @@ public class Updater {
 				}
 			}
 			if (!found) {
-				this.callbackHolder.newFound(remoteFile.getName());
+				this.progressCallbackHolder.newFound(remoteFile.getName());
 				//file was added
 				String localFilename = localPath+"/"+remoteFile.getName();
 				this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
 				this.progress+=remoteFile.getSize();
-				this.callbackHolder.totalProgress(this.progress, this.total);
+				this.progressCallbackHolder.totalProgress(this.progress, this.total);
 			}
 		}
 		
@@ -78,8 +86,10 @@ public class Updater {
 				}
 			}
 			if (!found) {
-				//directory was removed
-				deleteDirectoryTree(new File(localPath+"/"+localDirectory.getName()));
+				if (this.controllCallbackHolder.deleteExistingFile(localPath+"/"+localDirectory.getName())) {
+					//directory was removed
+					deleteDirectoryTree(new File(localPath+"/"+localDirectory.getName()));
+				}
 			}
 		}
 		
@@ -107,16 +117,16 @@ public class Updater {
 	private void deleteDirectoryTree(File file) {
 		for(File child: file.listFiles()) {
 			if (child.isFile()) {
-				this.callbackHolder.deleted(child.getName());
+				this.progressCallbackHolder.deleted(child.getName());
 				this.progress-=child.length();
-				this.callbackHolder.totalProgress(this.progress, this.total);
+				this.progressCallbackHolder.totalProgress(this.progress, this.total);
 				child.delete();
 			} else if (child.isDirectory()) {
 				deleteDirectoryTree(child);
 			}
 		}
 		file.delete();
-		this.callbackHolder.deleted(file.getName());
+		this.progressCallbackHolder.deleted(file.getName());
 	}
 	
 }
