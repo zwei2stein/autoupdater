@@ -40,7 +40,7 @@ public class XMLParser {
 	}
 
 	private static Directory parseDirectoryNode(Node item) {
-		Directory dir = new Directory(item.getAttributes().getNamedItem("name").getNodeValue());
+		Directory dir = new Directory(item.getAttributes().getNamedItem("name").getNodeValue(), parseBooleanAttribute(item, "ignore"));
 		
 		for (int i = 0; i < item.getChildNodes().getLength(); i++) {
 			Node child = item.getChildNodes().item(i);
@@ -56,6 +56,18 @@ public class XMLParser {
 		}
 		
 		return dir;
+	}
+	
+	private static boolean parseBooleanAttribute(Node item, String attributeName) {
+		
+		Node attribute = item.getAttributes().getNamedItem(attributeName);
+		
+		if (attribute != null) {
+			return Boolean.parseBoolean(attribute.getNodeValue());
+		} else {
+			return false;
+		}
+		
 	}
 
 	private static VersionedFile parseFileNode(Node item) {

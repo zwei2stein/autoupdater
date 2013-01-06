@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.util.List;
 
 import cz.zweistein.autoupdater.callback.IProgressCallback;
 
@@ -19,7 +20,9 @@ public class Remote {
 	
 	IProgressCallback progressCallback;
 	
-	private int bufferSize = 1024;
+	private static int bufferSize = 1024;
+	private static int seccondInNS = 10000000;
+	private static int retries = 3;
 	
 	public Remote(IProgressCallback progressCallback) {
 		super();
@@ -36,13 +39,13 @@ public class Remote {
 		
 		char[] buffer = new char[bufferSize];
 		try {
-			long count = 0;;
+			long count = 0;
 			int bytesRead;
 			long time = System.nanoTime();
 			while ((bytesRead = reader.read(buffer)) != -1) {
 				long nextTime = System.nanoTime();
 				if (nextTime != time) {
-					long bytesPerSecond = (10000000*bytesRead)/(nextTime - time);
+					long bytesPerSecond = (seccondInNS*bytesRead)/(nextTime - time);
 					progressCallback.speed(bytesPerSecond);
 					time = nextTime;
 				}
@@ -60,9 +63,29 @@ public class Remote {
 		
 	}
 	
-	public void downloadFile(String localFilename, String url, Long expectedSize) throws IOException {
+	public void downloadFileWithFailover(String localFilename, List<String> basePath, String url, Long expectedSize) throws IOException {
+		retries:
+		for (int j = 0; j < retries; j++) {
+			for (int i = 0; i < basePath.size(); i++) {
+				try {
+					downloadFile(localFilename, basePath.get(i), url, expectedSize);
+				} catch (IOException e) {
+					continue;
+				}
+				break retries;
+			}
+		}
+	}
+	
+	public void downloadFile(String localFilename, String basePath, String url, Long expectedSize) throws IOException {
 		
-		String replacedUrl = url.replaceAll(" ", "%20");
+		String replacedUrl = basePath + url;
+		
+		replacedUrl = replacedUrl.replaceAll(" ", "%20")
+			.replaceAll("\\(", "%28")
+			.replaceAll("\\)", "%29")
+			.replaceAll("\\[", "%5B")
+			.replaceAll("\\]", "%5D");
 		
 		URL remoteDefinition = new URL(replacedUrl);
 
@@ -77,7 +100,7 @@ public class Remote {
 			while ((bytesRead = reader.read(buffer)) != -1) {
 				long nextTime = System.nanoTime();
 				if (nextTime != time) {
-					long bytesPerSecond = (10000000*bytesRead)/(nextTime - time);
+					long bytesPerSecond = (seccondInNS*bytesRead)/(nextTime - time);
 					progressCallback.speed(bytesPerSecond);
 					time = nextTime;
 				}

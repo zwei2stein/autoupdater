@@ -17,7 +17,6 @@ public class ControllCallback implements IControllCallback {
 		this.callbacks.add(callback);
 	}
 
-	@Override
 	public boolean deleteExistingFile(String filename) {
 		if (callbacks.size() == 0 ) return true;
 		boolean takeAction = false;
@@ -27,7 +26,6 @@ public class ControllCallback implements IControllCallback {
 		return takeAction;
 	}
 
-	@Override
 	public boolean replaceExistingFile(String filename) {
 		if (callbacks.size() == 0 ) return true;
 		boolean takeAction = false;

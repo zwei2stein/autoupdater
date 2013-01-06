@@ -51,6 +51,9 @@ public class XMLProducer {
 		
 		Element directoryElement = doc.createElement("directory");
 		directoryElement.setAttribute("name", directory.getName());
+		if (directory.getIgnore() == true) {
+			directoryElement.setAttribute("ignore", Boolean.toString(directory.getIgnore()));
+		}
 		
 		for (Directory subDirectory : directory.getDirectories()) {
 			directoryElement.appendChild(parseDir(subDirectory, doc));
