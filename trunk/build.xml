@@ -9,7 +9,11 @@
 
 	<target name="compile" depends="clean">
 		<mkdir dir="${build.temp.path}"/>
-		<javac srcdir="src" destdir="${build.temp.path}" classpath="./lib/commons-codec-1.4/commons-codec-1.4.jar" />
+		<javac 
+			source="1.6"
+			target="1.6"
+			srcdir="src"
+			destdir="${build.temp.path}" classpath="./lib/commons-codec-1.4/commons-codec-1.4.jar" />
 	</target>
 
 	<target name="jar" depends="compile">

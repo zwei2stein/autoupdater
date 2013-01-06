@@ -13,7 +13,6 @@ public class ProgressCallback implements IProgressCallback {
 		callbacks = new ArrayList<IProgressCallback>();
 	}
 
-	@Override
 	public void changeFound(String filename) {
 		for (IProgressCallback callback : callbacks) {
 			callback.changeFound(filename);
@@ -21,7 +20,6 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 
-	@Override
 	public void newFound(String filename) {
 		for (IProgressCallback callback : callbacks) {
 			callback.newFound(filename);
@@ -29,7 +27,6 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 
-	@Override
 	public void deleted(String filename) {
 		for (IProgressCallback callback : callbacks) {
 			callback.deleted(filename);
@@ -37,7 +34,6 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 
-	@Override
 	public void done() {
 		for (IProgressCallback callback : callbacks) {
 			callback.done();
@@ -45,7 +41,6 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 
-	@Override
 	public void localParseStart() {
 		for (IProgressCallback callback : callbacks) {
 			callback.localParseStart();
@@ -53,7 +48,6 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 
-	@Override
 	public void localParseDone() {
 		for (IProgressCallback callback : callbacks) {
 			callback.localParseDone();
@@ -61,14 +55,12 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 	
-	@Override
 	public void error(String message) {
 		for (IProgressCallback callback : callbacks) {
 			callback.error(message);
 		}
 	}
 	
-	@Override
 	public void downloadProgress(Long progress, Long total, String url) {
 		for (IProgressCallback callback : callbacks) {
 			callback.downloadProgress(progress, total, url);
@@ -80,7 +72,6 @@ public class ProgressCallback implements IProgressCallback {
 		this.callbacks.add(callback);
 	}
 
-	@Override
 	public void totalProgress(Long localSize, Long remoteSize) {
 		for (IProgressCallback callback : callbacks) {
 			callback.totalProgress(localSize, remoteSize);
@@ -88,14 +79,12 @@ public class ProgressCallback implements IProgressCallback {
 		}
 	}
 
-	@Override
 	public void tick() {
 		for (IProgressCallback callback : callbacks) {
 			callback.tick();
 		}
 	}
 
-	@Override
 	public void speed(Long bytesPerSec) {
 		for (IProgressCallback callback : callbacks) {
 			callback.speed(bytesPerSec);

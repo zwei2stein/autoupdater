@@ -2,6 +2,7 @@ package cz.zweistein.autoupdater.definition;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import cz.zweistein.autoupdater.callback.IControllCallback;
 import cz.zweistein.autoupdater.callback.IProgressCallback;
@@ -26,7 +27,7 @@ public class Updater {
 		this.remote = new Remote(progressCallbackHolder);
 	}
 
-	public void compareAndUpdate(Directory local, Directory remote, String localPath, String remotePath) throws IOException {
+	public void compareAndUpdate(Directory local, Directory remote, String localPath, List<String> basePaths, String expandedPath) throws IOException {
 		
 		for (VersionedFile localFile : local.getFiles()) {
 			boolean found = false;
@@ -40,7 +41,7 @@ public class Updater {
 							//file is changed
 							String localFilename = localPath+"/"+localFile.getName();
 							new File(localFilename).delete();
-							this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
+							this.remote.downloadFileWithFailover(localFilename, basePaths, expandedPath + "/" + remoteFile.getName(), remoteFile.getSize());
 						}
 						this.progress+=remoteFile.getSize();
 						this.progressCallbackHolder.totalProgress(this.progress, this.total);
@@ -71,7 +72,7 @@ public class Updater {
 				this.progressCallbackHolder.newFound(remoteFile.getName());
 				//file was added
 				String localFilename = localPath+"/"+remoteFile.getName();
-				this.remote.downloadFile(localFilename, remotePath+"/"+remoteFile.getName(), remoteFile.getSize());
+				this.remote.downloadFileWithFailover(localFilename, basePaths, expandedPath + "/" + remoteFile.getName(), remoteFile.getSize());
 				this.progress+=remoteFile.getSize();
 				this.progressCallbackHolder.totalProgress(this.progress, this.total);
 			}
@@ -80,15 +81,21 @@ public class Updater {
 		for (Directory localDirectory : local.getDirectories()) {
 			boolean found = false;
 			for (Directory remoteDirectory : remote.getDirectories()) {
-				if (localDirectory.getName().equals(remoteDirectory.getName())) {
-					found = true;
-					compareAndUpdate(localDirectory, remoteDirectory, localPath+"/"+localDirectory.getName(), remotePath+"/"+remoteDirectory.getName());
+				if (!remoteDirectory.getIgnore()) {
+					if (localDirectory.getName().equals(remoteDirectory.getName())) {
+						found = true;
+						compareAndUpdate(localDirectory, remoteDirectory,
+								localPath + "/" + localDirectory.getName(),
+								basePaths, expandedPath + "/" + remoteDirectory.getName());
+					}
 				}
 			}
 			if (!found) {
-				if (this.controllCallbackHolder.deleteExistingFile(localPath+"/"+localDirectory.getName())) {
-					//directory was removed
-					deleteDirectoryTree(new File(localPath+"/"+localDirectory.getName()));
+				if (this.controllCallbackHolder.deleteExistingFile(localPath
+						+ "/" + localDirectory.getName())) {
+					// directory was removed
+					deleteDirectoryTree(new File(localPath + "/"
+							+ localDirectory.getName()));
 				}
 			}
 		}
@@ -96,19 +103,21 @@ public class Updater {
 		for (Directory remoteDirectory : remote.getDirectories()) {
 			boolean found = false;
 			for (Directory localDirectory : local.getDirectories()) {
-				if (localDirectory.getName().equals(remoteDirectory.getName())) {
-					found = true;
+				if (!remoteDirectory.getIgnore()) {
+					if (localDirectory.getName().equals(remoteDirectory.getName())) {
+						found = true;
+					}
 				}
 			}
 			if (!found) {
 				//directory was added
-				Directory newDir = new Directory(remoteDirectory.getName());
+				Directory newDir = new Directory(remoteDirectory.getName(), remoteDirectory.getIgnore());
 				local.getDirectories().add(newDir);
 				
 				String createdDirPath = localPath+"/"+newDir.getName(); 
 				new File(createdDirPath).mkdir();
 				
-				compareAndUpdate(newDir, remoteDirectory, createdDirPath, remotePath+"/"+remoteDirectory.getName());
+				compareAndUpdate(newDir, remoteDirectory, createdDirPath, basePaths, expandedPath + "/" + remoteDirectory.getName());
 			}
 		}
 		

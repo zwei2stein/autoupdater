@@ -19,6 +19,7 @@ public class AutoUpdaterDefinition extends Task {
 	
 	private String srcdir;
 	private String destfile;
+	private String ignoredirs;
 	
 	public void setSrcdir(String srcdir) {
 		this.srcdir = srcdir;
@@ -27,19 +28,37 @@ public class AutoUpdaterDefinition extends Task {
 	public void setDestfile(String destfile) {
 		this.destfile = destfile;
 	}
+	
+	public void setIgnoredirs(String ignoredirs) {
+		this.ignoredirs = ignoredirs;
+	}
 
 	public void execute() throws BuildException {
 		
 		try {
 			
+			System.out.println("Staring");
+			
 			FolderParser folderParser = new FolderParser(new DummyProgressCallback());
-			Directory directory = folderParser.parse(this.srcdir);
+			
+			System.out.println("Parsing " + this.srcdir);
+			
+			Directory directory = folderParser.parse(this.srcdir, this.ignoredirs);
+			
+			System.out.println("Converting Config File");
+			
 			String content = XMLProducer.createXML(directory);
+			
+			System.out.println("Saving " + this.destfile);
+			
 			File xmlFile = new File(this.destfile);
 	
 	        FileWriter fileWriter = new FileWriter(xmlFile);
 	        fileWriter.write(content);
 	        fileWriter.close();
+	        
+	        System.out.println("Done");
+	        
 		} catch (IOException e) {
 			throw new BuildException(e);
 		} catch (ParserConfigurationException e) {
@@ -49,6 +68,5 @@ public class AutoUpdaterDefinition extends Task {
 		}
         
 	}
-
 
 }

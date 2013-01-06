@@ -1,5 +1,7 @@
 package cz.zweistein.autoupdater;
 
+import java.util.List;
+
 import cz.zweistein.autoupdater.callback.ControllCallback;
 import cz.zweistein.autoupdater.callback.IControllCallback;
 import cz.zweistein.autoupdater.callback.IProgressCallback;
@@ -15,16 +17,16 @@ public class AutoUpdater {
 	private static final String DFEAULT_DEFINITION_FILE = "autoUpdater.xml";
 	
 	private String localFolder;
-	private String remoteDefinitionURL;
+	private List<String> remoteDefinitionURLs;
 	private String definitionFile;
 	
 	private ProgressCallback progressCallbackHolder;
 	private ControllCallback controllCallbackHolder;
 	
-	public AutoUpdater(String localFolder, String remoteDefinitionURL) {
+	public AutoUpdater(String localFolder, List<String> remoteDefinitionURLs) {
 		super();
 		this.localFolder = localFolder;
-		this.remoteDefinitionURL = remoteDefinitionURL;
+		this.remoteDefinitionURLs = remoteDefinitionURLs;
 		this.definitionFile = DFEAULT_DEFINITION_FILE;
 		
 		this.progressCallbackHolder = new ProgressCallback();
@@ -38,17 +40,17 @@ public class AutoUpdater {
 			this.progressCallbackHolder.localParseStart();
 			
 			FolderParser folderParser = new FolderParser(progressCallbackHolder);
-			Directory local = folderParser.parse(localFolder);
+			Directory local = folderParser.parse(localFolder, null);
 			this.progressCallbackHolder.localParseDone();
 			
 			Remote remote = new Remote(progressCallbackHolder);
 			
-			Directory remoteDir = XMLParser.parse(remote.getUrlContent(this.remoteDefinitionURL+"/"+this.definitionFile));
+			Directory remoteDir = XMLParser.parse(remote.getUrlContent(this.remoteDefinitionURLs.get(0) +"/"+this.definitionFile));
 			
 			this.progressCallbackHolder.totalProgress(local.getSize(), remoteDir.getSize());
 			
 			Updater updater = new Updater(progressCallbackHolder, controllCallbackHolder, local.getSize(), remoteDir.getSize()); 
-			updater.compareAndUpdate(local, remoteDir, localFolder, remoteDefinitionURL);
+			updater.compareAndUpdate(local, remoteDir, localFolder, remoteDefinitionURLs, "");
 			
 			this.progressCallbackHolder.done();
 		
