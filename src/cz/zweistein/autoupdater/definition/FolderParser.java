@@ -41,7 +41,9 @@ public class FolderParser {
 				for (File file : contents) {
 					
 					if (file.isDirectory()) {
-						directory.getDirectories().add(parse(file.getPath(), ignoredirs));
+						if (!file.getName().startsWith(".")) {
+							directory.getDirectories().add(parse(file.getPath(), ignoredirs));
+						}
 					} else if (file.isFile()) {
 						VersionedFile versionedFile = new VersionedFile();
 						versionedFile.setName(file.getName());
