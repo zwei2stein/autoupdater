@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 import cz.zweistein.autoupdater.callback.IProgressCallback;
@@ -79,13 +80,7 @@ public class Remote {
 	
 	public void downloadFile(String localFilename, String basePath, String url, Long expectedSize) throws IOException {
 		
-		String replacedUrl = basePath + url;
-		
-		replacedUrl = replacedUrl.replaceAll(" ", "%20")
-			.replaceAll("\\(", "%28")
-			.replaceAll("\\)", "%29")
-			.replaceAll("\\[", "%5B")
-			.replaceAll("\\]", "%5D");
+		String replacedUrl = URLEncoder.encode(basePath + url, "UTF-8");
 		
 		URL remoteDefinition = new URL(replacedUrl);
 
