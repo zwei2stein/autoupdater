@@ -80,8 +80,8 @@ public class Remote {
 	
 	public void downloadFile(String localFilename, String basePath, String url, Long expectedSize) throws IOException {
 		
-		// encode url, but preserve colons and slashes
-		String replacedUrl = URLEncoder.encode(basePath + url, "UTF-8").replaceAll("%3A", ":").replaceAll("%2F", "/");
+		// encode url, but preserve colons and slashes, encode spaces correctly
+		String replacedUrl = URLEncoder.encode(basePath + url, "UTF-8").replaceAll("\\+", "%20").replaceAll("%3A", ":").replaceAll("%2F", "/");
 		
 		URL remoteDefinition = new URL(replacedUrl);
 
